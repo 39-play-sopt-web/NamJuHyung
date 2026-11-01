@@ -1,33 +1,23 @@
 import { useState } from 'react'
-import { useTimer } from '../../hooks/useTimer'
 import { LEVELS } from '../../constants/levels'
 import { shuffle, range } from '../../utils/array'
 import { saveRecord } from '../../utils/ranking'
 import ResultModal from '../../components/Modal/ResultModal'
 import './Game.css'
 
-function Game({ level, onTimeChange }) {
+function Game({ level, onStart, onEnd, onRestart }) {
   const { size, cellSize } = LEVELS.find((lv) => lv.value === level)
   const cellCount = size * size
   const lastNumber = cellCount * 2
-  const timer = useTimer(onTimeChange)
 
   const [board, setBoard] = useState(() => shuffle(range(1, cellCount)))
   const [queue, setQueue] = useState(() => shuffle(range(cellCount + 1, lastNumber)))
   const [next, setNext] = useState(1)
   const [result, setResult] = useState(null)
 
-  const resetGame = () => {
-    setBoard(shuffle(range(1, cellCount)))
-    setQueue(shuffle(range(cellCount + 1, lastNumber)))
-    setNext(1)
-    setResult(null)
-    onTimeChange(0)
-  }
-
   const handleClick = (num, index) => {
     if (num !== next) return
-    if (num === 1) timer.start()
+    if (num === 1) onStart()
 
     const newBoard = [...board]
     newBoard[index] = queue[0] ?? null
@@ -35,8 +25,7 @@ function Game({ level, onTimeChange }) {
     setQueue(queue.slice(1))
 
     if (num === lastNumber) {
-      const playTime = Number(timer.stop().toFixed(2))
-      onTimeChange(playTime)
+      const playTime = Number(onEnd().toFixed(2))
       saveRecord({ date: new Date().toISOString(), level, time: playTime })
       setResult(playTime)
       return
@@ -48,7 +37,7 @@ function Game({ level, onTimeChange }) {
   return (
     <section className="text-center">
       <p className="fs-5 mb-3">
-        다음 숫자: <strong className="text-primary fs-2">{next}</strong> ({next} /{lastNumber})
+        다음 숫자: <strong className="text-primary fs-2">{next}</strong> ({next} / {lastNumber})
       </p>
 
       <div
@@ -74,7 +63,7 @@ function Game({ level, onTimeChange }) {
         )}
       </div>
 
-      {result !== null && <ResultModal time={result} level={level} onConfirm={resetGame} />}
+      {result !== null && <ResultModal time={result} level={level} onConfirm={onRestart} />}
     </section>
   )
 }

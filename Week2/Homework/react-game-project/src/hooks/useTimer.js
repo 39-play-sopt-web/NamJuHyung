@@ -1,25 +1,16 @@
 import { useEffect, useState } from 'react'
 
-export function useTimer(onTick) {
-  const [startTime, setStartTime] = useState(null)
+export function useTimer(startTime, endTime) {
+  const [now, setNow] = useState(0)
 
   useEffect(() => {
-    if (startTime === null) return
+    if (startTime === null || endTime !== null) return
     const id = setInterval(() => {
-      onTick((Date.now() - startTime) / 1000)
+      setNow(Date.now())
     }, 10)
     return () => clearInterval(id)
-  }, [startTime, onTick])
+  }, [startTime, endTime])
 
-  const start = () => {
-    setStartTime(Date.now())
-  }
-
-  const stop = () => {
-    const elapsed = (Date.now() - startTime) / 1000
-    setStartTime(null)
-    return elapsed
-  }
-
-  return { start, stop }
+  if (startTime === null) return 0
+  return Math.max((endTime ?? now) - startTime, 0) / 1000
 }

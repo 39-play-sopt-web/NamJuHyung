@@ -8,18 +8,40 @@ import { DEFAULT_LEVEL } from "./constants/levels"
 function App() {
   const [menu, setMenu] = useState(MENU.GAME)
   const [level, setLevel] = useState(DEFAULT_LEVEL)
-  const [time, setTime] = useState(0)
+  const [startTime, setStartTime] = useState(null)
+  const [endTime, setEndTime] = useState(null)
+  const [round, setRound] = useState(0)
 
   const isGameMenu = menu === MENU.GAME
 
+  const resetTimer = () => {
+    setStartTime(null)
+    setEndTime(null)
+  }
+
+  const handleStart = () => {
+    setStartTime(Date.now())
+  }
+
+  const handleEnd = () => {
+    const now = Date.now()
+    setEndTime(now)
+    return (now - startTime) / 1000
+  }
+
   const handleMenuChange = (nextMenu) => {
     setMenu(nextMenu)
-    setTime(0)
+    resetTimer()
   }
 
   const handleLevelChange = (nextLevel) => {
     setLevel(nextLevel)
-    setTime(0)
+    resetTimer()
+  }
+
+  const handleRestart = () => {
+    setRound((prev) => prev + 1)
+    resetTimer()
   }
 
   return (
@@ -29,13 +51,24 @@ function App() {
         onMenuChange={handleMenuChange}
         level={level}
         onLevelChange={handleLevelChange}
-        time={time}
+        startTime={startTime}
+        endTime={endTime}
       />
 
       <main
         className={`flex-grow-1 d-flex justify-content-center ${ isGameMenu ? 'align-items-center' : 'align-items-start pt-5'}`}
       >
-        {isGameMenu ? <Game key={level} level={level} onTimeChange={setTime} /> : <Ranking />}
+        {isGameMenu ? (
+          <Game
+            key={`${level}-${round}`}
+            level={level}
+            onStart={handleStart}
+            onEnd={handleEnd}
+            onRestart={handleRestart}
+          />
+        ) : (
+          <Ranking />
+        )}
       </main>
     </div>
   )

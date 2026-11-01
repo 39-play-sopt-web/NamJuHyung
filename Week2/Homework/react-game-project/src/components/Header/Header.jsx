@@ -1,7 +1,8 @@
 import { LEVELS } from '../../constants/levels'
-import { MENUS } from "../../constants/menu"
+import { MENUS, MENU } from "../../constants/menu"
+import Timer from './Timer'
 
-function Header({ menu, onMenuChange, level, onLevelChange, time }) {
+function Header({ menu, onMenuChange, level, onLevelChange, startTime, endTime }) {
 
   return (
     <header className="bg-white border-bottom shadow-sm sticky-top">
@@ -28,7 +29,7 @@ function Header({ menu, onMenuChange, level, onLevelChange, time }) {
 
         {/* 오른쪽:게임일 때만 레벨 선택 + 타이머 */}
         <div className="header-side d-flex justify-content-end align-items-center gap-3">
-          {menu === 'game' && (
+          {menu === MENU.GAME && (
             <>
               <select
                 className="form-select form-select-sm w-auto"
@@ -43,7 +44,7 @@ function Header({ menu, onMenuChange, level, onLevelChange, time }) {
                 ))}
               </select>
 
-              <span className="badge text-bg-primary fs-6 fw-normal p-2">{time.toFixed(2)}초</span>
+              <Timer startTime={startTime} endTime={endTime} />
             </>
           )}
         </div>
