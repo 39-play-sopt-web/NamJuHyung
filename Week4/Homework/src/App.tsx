@@ -10,13 +10,15 @@ import LoginPage from './pages/LoginPage'
 const router = createBrowserRouter([
   { path: ROUTES.HOME, element: <LoginPage /> },
   {
-    element: <Layout />,
+    element: <RequireAuth />,
     children: [
-      { path: ROUTES.BOARD, element: <BoardMainPage /> },
-      { path: ROUTES.BOARD_DETAIL, element: <BoardDetailPage /> },
       {
-        element: <RequireAuth />,
-        children: [{ path: ROUTES.BOARD_WRITE, element: <BoardWritePage /> }],
+        element: <Layout />,
+        children: [
+          { path: ROUTES.BOARD, element: <BoardMainPage /> },
+          { path: ROUTES.BOARD_DETAIL, element: <BoardDetailPage /> },
+          { path: ROUTES.BOARD_WRITE, element: <BoardWritePage /> },
+        ],
       },
     ],
   },
