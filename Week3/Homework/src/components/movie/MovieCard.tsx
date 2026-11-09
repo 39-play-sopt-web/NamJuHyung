@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { Link } from 'react-router'
 import defaultPoster from '../../asset/poster.svg'
 import ScoreBadge from '../common/ScoreBadge'
 
@@ -8,7 +9,8 @@ interface MovieCardProps {
   overview: string
   rating: number
   poster?: string
-  onClick?: () => void
+  to: string
+  listPath: string
 }
 
 function MovieCard({
@@ -17,10 +19,11 @@ function MovieCard({
   overview,
   rating,
   poster = defaultPoster,
-  onClick,
+  to,
+  listPath,
 }: MovieCardProps) {
   return (
-    <CardWrapper type="button" onClick={onClick}>
+    <CardWrapper to={to} state={{ from: listPath }}>
       <PosterWrapper>
         <Poster src={poster} alt={`${title} 포스터`} />
         <ScorePosition>
@@ -39,15 +42,12 @@ function MovieCard({
 
 export default MovieCard
 
-const CardWrapper = styled.button`
+const CardWrapper = styled(Link)`
   display: flex;
   flex-direction: column;
   width: 100%;
-  border: none;
   border-radius: 12px;
   overflow: hidden;
-  text-align: left;
-  cursor: pointer;
   background-color: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
   transition:

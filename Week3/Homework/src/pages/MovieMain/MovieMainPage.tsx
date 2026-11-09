@@ -1,6 +1,5 @@
-import { generatePath, useNavigate, useSearchParams } from 'react-router'
+import { useLocation, useSearchParams } from 'react-router'
 import MovieMain from './MovieMain'
-import { ROUTES } from '../../constants/routes'
 import { useMovieList } from '../../hooks/useMovieList'
 import type { RatingRange } from '../../api/movie'
 
@@ -30,13 +29,13 @@ const RATING_FILTERS: RatingFilter[] = [
     label: '6 ~ 7점',
     range: { voteAverageGte: 6, voteAverageLte: 7 },
   },
-  { value: 'under6', label: '6점 미만', range: { voteAverageLte: 6 } },
+  { value: 'under6', label: '6점 이하', range: { voteAverageLte: 6 } },
 ]
 
 const DEFAULT_FILTER = RATING_FILTERS[0]
 
 function MovieMainPage() {
-  const navigate = useNavigate()
+  const { pathname, search } = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const selectedFilter =
@@ -55,10 +54,6 @@ function MovieMainPage() {
     )
   }
 
-  const handleMovieClick = (id: number) => {
-    navigate(generatePath(ROUTES.MOVIE_DETAIL, { movieId: String(id) }))
-  }
-
   return (
     <MovieMain
       filters={RATING_FILTERS.map(({ label }) => label)}
@@ -69,7 +64,7 @@ function MovieMainPage() {
       isError={isError}
       hasNextPage={hasNextPage}
       onLoadMore={loadMore}
-      onMovieClick={handleMovieClick}
+      listPath={pathname + search}
     />
   )
 }

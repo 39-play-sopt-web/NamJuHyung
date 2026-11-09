@@ -13,7 +13,7 @@ interface MovieMainProps {
   isError: boolean
   hasNextPage: boolean
   onLoadMore: () => void
-  onMovieClick: (id: number) => void
+  listPath: string
 }
 
 function MovieMain({
@@ -25,7 +25,7 @@ function MovieMain({
   isError,
   hasNextPage,
   onLoadMore,
-  onMovieClick,
+  listPath,
 }: MovieMainProps) {
   const sentinelRef = useInfiniteScroll(onLoadMore)
 
@@ -47,9 +47,7 @@ function MovieMain({
         ))}
       </BadgeList>
 
-      {showList && (
-        <MovieCardSection movies={movies} onMovieClick={onMovieClick} />
-      )}
+      {showList && <MovieCardSection movies={movies} listPath={listPath} />}
       {isLoading && <StatusText>영화를 불러오는 중이에요.</StatusText>}
       {isError && <StatusText>영화를 불러오지 못했어요.</StatusText>}
       {hasNextPage && !isLoading && !isError && <Sentinel ref={sentinelRef} />}

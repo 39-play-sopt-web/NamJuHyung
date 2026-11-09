@@ -7,10 +7,15 @@ interface MovieDetailResult {
   isError: boolean
 }
 
+const isValidMovieId = (movieId: number) =>
+  Number.isInteger(movieId) && movieId > 0
+
 export const useMovieDetail = (movieId: number) => {
   const [result, setResult] = useState<MovieDetailResult | null>(null)
 
   useEffect(() => {
+    if (!isValidMovieId(movieId)) return
+
     let ignore = false
 
     getMovieDetail(movieId)
@@ -25,6 +30,10 @@ export const useMovieDetail = (movieId: number) => {
       ignore = true
     }
   }, [movieId])
+
+  if (!isValidMovieId(movieId)) {
+    return { movie: null, isLoading: false, isError: true }
+  }
 
   const isCurrent = result?.movieId === movieId
 

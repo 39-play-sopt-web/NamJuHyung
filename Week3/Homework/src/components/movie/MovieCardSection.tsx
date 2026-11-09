@@ -1,17 +1,19 @@
 import styled from '@emotion/styled'
+import { generatePath } from 'react-router'
 import MovieCard from './MovieCard'
 import type { Movie } from '../../api/movie'
+import { ROUTES } from '../../constants/routes'
 import { formatDate } from '../../utils/format'
 import { getTmdbImageUrl } from '../../utils/image'
 
-const COLUMN_COUNT = 5
+const CARD_MIN_WIDTH = '180px'
 
 interface MovieCardSectionProps {
   movies: Movie[]
-  onMovieClick: (id: number) => void
+  listPath: string
 }
 
-function MovieCardSection({ movies, onMovieClick }: MovieCardSectionProps) {
+function MovieCardSection({ movies, listPath }: MovieCardSectionProps) {
   if (movies.length === 0) {
     return <EmptyMovie>해당하는 영화가 없어요.</EmptyMovie>
   }
@@ -32,7 +34,8 @@ function MovieCardSection({ movies, onMovieClick }: MovieCardSectionProps) {
               ? getTmdbImageUrl(movie.poster_path, 'w500')
               : undefined
           }
-          onClick={() => onMovieClick(movie.id)}
+          to={generatePath(ROUTES.MOVIE_DETAIL, { movieId: String(movie.id) })}
+          listPath={listPath}
         />
       ))}
     </CardGrid>
@@ -43,7 +46,7 @@ export default MovieCardSection
 
 const CardGrid = styled.section`
   display: grid;
-  grid-template-columns: repeat(${COLUMN_COUNT}, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(${CARD_MIN_WIDTH}, 1fr));
   gap: 30px;
   width: 100%;
   padding-bottom: 48px;
