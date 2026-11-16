@@ -67,7 +67,7 @@ export default function BoardDetailPage() {
     })
   }
 
-  if (!Number.isInteger(postId) || isError) {
+  if (!Number.isInteger(postId) || postId <= 0 || isError) {
     return (
       <Status>
         <p>게시글을 찾을 수 없습니다</p>

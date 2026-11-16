@@ -59,7 +59,7 @@ export default function PostEditForm({ post, onClose }: PostEditFormProps) {
       ))}
 
       <Actions>
-        <OutlineButton type="button" onClick={onClose}>
+        <OutlineButton type="button" onClick={onClose} disabled={isPending}>
           취소
         </OutlineButton>
         <PrimaryButton type="submit" disabled={isDisabled}>

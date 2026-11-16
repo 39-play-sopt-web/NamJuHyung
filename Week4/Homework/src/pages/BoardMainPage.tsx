@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom'
 import styled from '@emotion/styled'
 import PostCard from '../components/board/PostCard'
 import SearchBar from '../components/board/SearchBar'
+import { OutlineButton } from '../components/common/Button'
 import { SEARCH_PARAMS } from '../constants/routes'
 import { usePosts } from '../hooks/queries/usePosts'
 import { useIntersect } from '../hooks/useIntersect'
@@ -16,11 +17,12 @@ export default function BoardMainPage() {
     isFetchingNextPage,
     isPending,
     isError,
+    isFetchNextPageError,
   } = usePosts(keyword)
 
   const sentinelRef = useIntersect<HTMLDivElement>({
     onIntersect: fetchNextPage,
-    enabled: hasNextPage && !isFetchingNextPage,
+    enabled: hasNextPage && !isFetchingNextPage && !isFetchNextPageError,
   })
 
   const handleSearch = (nextKeyword: string) => {
@@ -29,7 +31,7 @@ export default function BoardMainPage() {
 
   const renderList = () => {
     if (isPending) return <Status>불러오는 중...</Status>
-    if (isError) return <Status>게시글을 불러오지 못했습니다</Status>
+    if (isError && posts.length === 0) return <Status>게시글을 불러오지 못했습니다</Status>
     if (posts.length === 0) {
       return (
         <Status>
@@ -58,6 +60,14 @@ export default function BoardMainPage() {
 
       <div ref={sentinelRef} />
       {isFetchingNextPage && <Status>더 불러오는 중...</Status>}
+      {isFetchNextPageError && (
+        <Retry>
+          <p>다음 게시글을 불러오지 못했습니다</p>
+          <OutlineButton type="button" onClick={() => fetchNextPage()}>
+            다시 시도
+          </OutlineButton>
+        </Retry>
+      )}
     </Wrapper>
   )
 }
@@ -84,4 +94,12 @@ const Status = styled.p`
   padding: 64px 0;
   text-align: center;
   opacity: 0.6;
+`
+
+const Retry = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 0;
 `
